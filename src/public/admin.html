@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MTScent Inventory</title>
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section id="loginView" class="login-panel">
+        <div class="login-copy">
+          <p class="eyebrow">Secure Access</p>
+          <h1>MTScent owner inventory console</h1>
+          <p>Sign in with an authorized owner or admin account to manage fragrance stock, decants, orders, reports, and product records.</p>
+        </div>
+        <form id="loginForm" class="stack auth-card" autocomplete="on">
+          <img class="brand-logo" src="/assets/mtscent-lounge.png" alt="MTScent">
+          <div>
+            <p class="eyebrow">MTScent</p>
+            <h2>Admin Login</h2>
+          </div>
+          <label>Email <input name="email" type="email" autocomplete="username" required></label>
+          <label>Password <input name="password" type="password" autocomplete="current-password" required></label>
+          <button type="submit">Log in</button>
+          <p id="loginError" class="error"></p>
+        </form>
+      </section>
+
+      <section id="appView" class="hidden">
+        <div class="layout">
+          <aside class="sidenav">
+            <div class="brand-lockup">
+              <img class="topbar-logo" src="/assets/mtscent-lounge.png" alt="MTScent">
+              <div>
+                <p class="eyebrow">MTScent</p>
+                <h1>Owner Console</h1>
+              </div>
+            </div>
+
+            <nav class="nav-modules" aria-label="Main sections">
+              <div class="nav-module open">
+                <button class="nav-module-toggle" type="button" aria-expanded="true">
+                  <span class="nav-module-title">Inventory</span>
+                  <span class="nav-caret" aria-hidden="true">▾</span>
+                </button>
+                <div class="nav-module-items">
+                  <button class="tab active" data-tab="dashboard">Dashboard</button>
+                  <button class="tab" data-tab="catalog">Products</button>
+                  <div class="nav-subitems hidden" id="productsSubnav">
+                    <button class="tab subnav-item" data-tab="accessories">Accessories</button>
+                  </div>
+                  <button class="tab" data-tab="bottles">Bottles</button>
+                  <button class="tab" data-tab="decants">Decants</button>
+                  <button class="tab" data-tab="sales">Sales</button>
+                  <button class="tab" data-tab="reports">Reports</button>
+                </div>
+              </div>
+            </nav>
+
+            <div class="sidenav-footer">
+              <span id="currentUser"></span>
+              <button id="logoutButton" type="button">Log out</button>
+            </div>
+          </aside>
+
+          <div class="content">
+            <p id="notice" class="notice hidden"></p>
+
+            <section id="dashboard" class="tab-panel">
+          <div class="metrics">
+            <article><span>Available ml</span><strong id="metricMl">0</strong></article>
+            <article><span>Opened bottles</span><strong id="metricDecants">0</strong></article>
+            <article><span>Unopened bottles</span><strong id="metricBottles">0</strong></article>
+            <article><span>Gross profit</span><strong id="metricProfit">0</strong></article>
+          </div>
+          <div class="grid two">
+            <section>
+              <h2>Products Ready For Decant</h2>
+              <div id="readyDecants"></div>
+            </section>
+            <section>
+              <h2>Recent Sales</h2>
+              <div id="recentSales"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="catalog" class="tab-panel hidden">
+          <section>
+            <div class="section-heading">
+              <h2>Products</h2>
+              <button id="openProductDialog" type="button">Add Product</button>
+            </div>
+            <div id="fragranceList" class="cards"></div>
+          </section>
+
+          <dialog id="productDialog" class="app-dialog">
+            <form id="fragranceForm" class="card-form" enctype="multipart/form-data">
+              <input name="product_id" type="hidden">
+              <div class="section-heading">
+                <h2 id="productFormTitle">Add Product</h2>
+                <button id="closeProductDialog" class="icon-button" type="button" aria-label="Close">✕</button>
+              </div>
+              <label>Brand <input name="brand" required></label>
+              <label>Name <input name="name" required></label>
+              <label>Description <textarea name="description"></textarea></label>
+              <div class="form-group">
+                <div class="section-heading"><h3>Fragrance Notes</h3></div>
+                <label>Top notes <input name="top_notes" placeholder="e.g. Bergamot, lemon, pink pepper"></label>
+                <label>Middle notes <input name="middle_notes" placeholder="e.g. Rose, jasmine, lavender"></label>
+                <label>Base notes <input name="base_notes" placeholder="e.g. Oud, musk, vanilla"></label>
+              </div>
+              <label>ML per bottle <input name="bottle_size_ml" type="number" min="0.001" step="0.001" required></label>
+              <label>Quantity bought <input name="bottle_quantity" type="number" min="1" step="1" value="1" required></label>
+              <label>Date bought <input name="purchase_date" type="date"></label>
+              <label>Perfume cost per bottle <input name="purchase_cost" type="number" min="0" step="0.01" required></label>
+              <div class="form-group">
+                <div class="section-heading">
+                  <h3>Accessories</h3>
+                  <button id="addAccessoryButton" class="secondary" type="button">Add accessory</button>
+                </div>
+                <div id="accessoryRows" class="accessory-list"></div>
+                <datalist id="accessoryNameOptions"></datalist>
+              </div>
+              <p class="summary-line">Overall product cost: <strong id="productCostPreview">0.00</strong></p>
+              <div class="form-group">
+                <div class="section-heading">
+                  <h3>Target Income</h3>
+                </div>
+                <div class="target-fields">
+                  <label>Target income <input name="target_income" type="number" min="0" step="0.01" value="0"></label>
+                  <label>Selling price (cost + target income)
+                    <input id="targetSellingPrice" name="target_selling_price" type="number" tabindex="-1" readonly>
+                  </label>
+                </div>
+                <div class="section-heading"><h3>Selling Prices</h3></div>
+                <div class="price-fields">
+                  <label>Price for 5 ml <input id="price5ml" name="price_5ml" type="number" min="0" step="0.01"></label>
+                  <label>Price for 10 ml <input id="price10ml" name="price_10ml" type="number" min="0" step="0.01"></label>
+                  <label>Price per full bottle <input id="priceFullBottle" name="price_full_bottle" type="number" min="0" step="0.01"></label>
+                </div>
+                <p class="muted" id="priceHint" style="margin:0;font-size:0.82rem;"></p>
+              </div>
+              <label>Product picture <input name="image" type="file" accept="image/png,image/jpeg,image/webp"></label>
+              <div class="toolbar">
+                <button id="saveProductButton" type="submit">Save product</button>
+                <button id="cancelEditProductButton" class="secondary" type="button">Cancel</button>
+              </div>
+            </form>
+          </dialog>
+
+          <dialog id="decantQtyDialog" class="app-dialog">
+            <form id="decantQtyForm" class="card-form">
+              <div class="section-heading">
+                <h2>Add to Decants</h2>
+                <button id="closeDecantQty" class="icon-button" type="button" aria-label="Close">✕</button>
+              </div>
+              <input name="product_id" type="hidden">
+              <div id="decantQtyInfo" class="form-group"></div>
+              <label>How many bottles to open for decants?
+                <input name="quantity" type="number" min="1" step="1" value="1" required>
+              </label>
+              <div class="toolbar">
+                <button type="submit">Move to decants</button>
+                <button id="cancelDecantQty" class="secondary" type="button">Cancel</button>
+              </div>
+            </form>
+          </dialog>
+        </section>
+
+        <section id="accessories" class="tab-panel hidden">
+          <section>
+            <div class="section-heading">
+              <h2>Accessories</h2>
+              <button id="openAccessoryDialog" type="button">Add accessory</button>
+            </div>
+            <p class="muted">These are the accessories you can pick when adding a product. New ones you use in products are added here automatically.</p>
+            <div id="accessoryCatalogList" class="cards"></div>
+          </section>
+
+          <dialog id="accessoryDialog" class="app-dialog">
+            <form id="accessoryForm" class="card-form">
+              <div class="section-heading">
+                <h2>Add Accessory</h2>
+                <button id="closeAccessoryDialog" class="icon-button" type="button" aria-label="Close">✕</button>
+              </div>
+              <label>Accessory name <input name="name" required placeholder="e.g. 5ml decant bottle"></label>
+              <label>Default cost <input name="default_cost" type="number" min="0" step="0.01" value="0"></label>
+              <div class="toolbar">
+                <button type="submit">Save accessory</button>
+                <button id="cancelAccessoryDialog" class="secondary" type="button">Cancel</button>
+              </div>
+            </form>
+          </dialog>
+        </section>
+
+        <section id="bottles" class="tab-panel hidden">
+          <section>
+            <h2>Bottles</h2>
+            <div id="bottleList" class="cards"></div>
+          </section>
+
+          <dialog id="bottleSaleDialog" class="app-dialog">
+            <form id="bottleSaleForm" class="card-form">
+              <div class="section-heading">
+                <h2>Sell Bottle</h2>
+                <button id="closeBottleSale" class="icon-button" type="button" aria-label="Close">✕</button>
+              </div>
+              <input name="source_bottle_id" type="hidden">
+              <div id="bottleSaleInfo" class="form-group"></div>
+              <label>Customer name <input name="customer_name"></label>
+              <label>Phone <input name="customer_phone"></label>
+              <label>Email <input name="customer_email" type="email"></label>
+              <label>Selling price <input name="sold_price" type="number" min="0" step="0.01" required></label>
+              <label>Delivery type
+                <select name="fulfillment_method" required>
+                  <option value="delivery">Delivery</option>
+                  <option value="meetup">Meetup</option>
+                  <option value="pickup">Pickup</option>
+                </select>
+              </label>
+              <label>Customer address / meetup place <textarea name="customer_address"></textarea></label>
+              <label>Notes <textarea name="notes"></textarea></label>
+              <div class="toolbar">
+                <button type="submit">Record sale</button>
+                <button id="cancelBottleSale" class="secondary" type="button">Cancel</button>
+              </div>
+            </form>
+          </dialog>
+        </section>
+
+        <section id="decants" class="tab-panel hidden">
+          <section>
+            <h2>Available For Decant</h2>
+            <p class="muted">Click a product to record a sale.</p>
+            <div id="decantList" class="cards"></div>
+          </section>
+
+          <dialog id="decantSaleDialog" class="app-dialog">
+            <form id="decantSaleForm" class="card-form">
+              <div class="section-heading">
+                <h2>Sell Decant</h2>
+                <button id="closeDecantSale" class="icon-button" type="button" aria-label="Close">✕</button>
+              </div>
+              <input name="source_bottle_id" type="hidden">
+              <div id="decantSaleInfo" class="form-group"></div>
+              <label>Customer name <input name="customer_name"></label>
+              <label>Phone <input name="customer_phone"></label>
+              <label>Email <input name="customer_email" type="email"></label>
+              <label>Sold ml <input name="sold_ml" type="number" min="0.001" step="0.001" required></label>
+              <label>Selling price <input name="sold_price" type="number" min="0" step="0.01" required></label>
+              <label>Delivery type
+                <select name="fulfillment_method" required>
+                  <option value="delivery">Delivery</option>
+                  <option value="meetup">Meetup</option>
+                  <option value="pickup">Pickup</option>
+                </select>
+              </label>
+              <label>Customer address / meetup place <textarea name="customer_address"></textarea></label>
+              <label>Notes <textarea name="notes"></textarea></label>
+              <div class="toolbar">
+                <button type="submit">Save sale</button>
+                <button id="cancelDecantSale" class="secondary" type="button">Cancel</button>
+              </div>
+            </form>
+          </dialog>
+        </section>
+
+        <section id="sales" class="tab-panel hidden">
+          <section>
+            <h2>Sales</h2>
+            <p class="muted">Click a product to see its sales.</p>
+            <div id="orderList"></div>
+          </section>
+
+          <dialog id="orderDetailDialog" class="app-dialog app-dialog--center">
+            <div class="card-form">
+              <div class="section-heading">
+                <h2 id="orderDetailTitle">Sale details</h2>
+                <button id="closeOrderDetail" class="icon-button" type="button" aria-label="Close">✕</button>
+              </div>
+              <div id="orderDetailBody"></div>
+            </div>
+          </dialog>
+        </section>
+
+        <section id="reports" class="tab-panel hidden">
+          <div class="toolbar">
+            <a class="button-link" href="/api/reports/export/inventory">Export inventory CSV</a>
+            <a class="button-link" href="/api/reports/export/orders">Export orders CSV</a>
+          </div>
+          <div class="grid two">
+            <section>
+              <h2>Inventory Movements</h2>
+              <div id="movementList"></div>
+            </section>
+            <section>
+              <h2>Audit Log</h2>
+              <div id="auditList"></div>
+            </section>
+          </div>
+        </section>
+
+          <dialog id="newSaleDialog" class="app-dialog">
+            <form id="newSaleForm" class="card-form">
+              <input name="order_id" type="hidden">
+              <div class="section-heading">
+                <h2 id="newSaleTitle">Add Sale</h2>
+                <button id="closeNewSale" class="icon-button" type="button" aria-label="Close">✕</button>
+              </div>
+              <label>Product (opened decant)
+                <select name="source_bottle_id" id="newSaleProduct" required></select>
+              </label>
+              <div id="newSaleInfo" class="form-group"></div>
+              <label>Customer name <input name="customer_name"></label>
+              <label>Phone <input name="customer_phone"></label>
+              <label>Email <input name="customer_email" type="email"></label>
+              <label>Sold ml <input name="sold_ml" type="number" min="0.001" step="0.001" required></label>
+              <label>Selling price <input name="sold_price" type="number" min="0" step="0.01" required></label>
+              <label>Status
+                <select name="status" required>
+                  <option value="completed">Completed</option>
+                  <option value="pending">Pending</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </label>
+              <label>Delivery type
+                <select name="fulfillment_method" required>
+                  <option value="delivery">Delivery</option>
+                  <option value="meetup">Meetup</option>
+                  <option value="pickup">Pickup</option>
+                </select>
+              </label>
+              <label>Customer address / meetup place <textarea name="customer_address"></textarea></label>
+              <label>Notes <textarea name="notes"></textarea></label>
+              <div class="toolbar">
+                <button id="saveNewSale" type="submit">Record sale</button>
+                <button id="cancelNewSale" class="secondary" type="button">Cancel</button>
+              </div>
+            </form>
+          </dialog>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="/js/app.js"></script>
+  </body>
+</html>

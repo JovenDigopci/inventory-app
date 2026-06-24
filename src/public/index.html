@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MT Scent — Luxury Fragrances, Decanted for You</title>
+    <meta name="description" content="MT Scent — authentic designer and niche fragrances available as affordable decants or full bottles. Order online for delivery, meetup, or pickup.">
+    <link rel="stylesheet" href="/css/shop.css?v=4">
+  </head>
+  <body>
+    <header class="site-header" id="top">
+      <a class="brand" href="#top">
+        <img src="/assets/mtscent-lounge.png" alt="MT Scent">
+        <span>MT&nbsp;Scent</span>
+      </a>
+      <nav class="site-nav">
+        <a href="#collection">Collection</a>
+        <a href="#how">How it works</a>
+        <a href="#contact">Contact</a>
+        <button class="nav-cta" id="cartBtn" type="button">🛒 Cart (<span id="cartCount">0</span>)</button>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow">Authentic · Decanted · Affordable</p>
+        <h1>Luxury fragrances, decanted for you.</h1>
+        <p class="hero-sub">Discover designer and niche scents from MT Scent. Try them as affordable
+          decants by the milliliter, or take home the full bottle — delivered, met up, or picked up.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#collection">Shop the collection</a>
+          <a class="btn ghost" href="#how">How it works</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="value-strip">
+      <div class="value">
+        <h3>100% Authentic</h3>
+        <p>Every scent is genuine, decanted fresh from original bottles.</p>
+      </div>
+      <div class="value">
+        <h3>Decant or Full Bottle</h3>
+        <p>Try a few milliliters first, or commit to the whole bottle.</p>
+      </div>
+      <div class="value">
+        <h3>Affordable Luxury</h3>
+        <p>Experience premium fragrances without the premium price.</p>
+      </div>
+    </section>
+
+    <section id="collection" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Our Collection</p>
+        <h2>Find your signature scent</h2>
+        <p class="section-sub">Browse what's in stock right now. Order a decant by the ml or a full bottle.</p>
+      </div>
+      <div id="shopGrid" class="shop-grid">
+        <p class="loading">Loading the collection…</p>
+      </div>
+    </section>
+
+    <section id="how" class="section how">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2>Ordering is simple</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span><h3>Pick a scent</h3><p>Browse the collection and choose the fragrance you love.</p></div>
+        <div class="step"><span class="step-num">2</span><h3>Decant or bottle</h3><p>Choose how many ml you want, or order the full bottle.</p></div>
+        <div class="step"><span class="step-num">3</span><h3>We confirm</h3><p>Send your order — we'll reach out to arrange delivery or meetup.</p></div>
+      </div>
+    </section>
+
+    <footer id="contact" class="site-footer">
+      <div class="footer-brand">
+        <img src="/assets/mtscent-lounge.png" alt="MT Scent">
+        <div>
+          <strong>MT Scent</strong>
+          <p>Luxury fragrances, decanted for you.</p>
+        </div>
+      </div>
+      <div class="footer-contact">
+        <p>Message us to order or ask about a scent.</p>
+        <p class="muted">Delivery · Meetup · Pickup</p>
+        <a class="owner-link" href="/admin">Owner login</a>
+      </div>
+    </footer>
+
+    <dialog id="infoDialog" class="info-dialog">
+      <button id="closeInfo" class="icon-button info-close" type="button" aria-label="Close">✕</button>
+      <div class="info-figure">
+        <img id="infoImage" class="info-image" alt="">
+      </div>
+      <div class="info-body">
+        <p class="product-brand" id="infoBrand"></p>
+        <h2 id="infoName" class="info-name"></h2>
+        <p id="infoDesc" class="info-desc"></p>
+        <div id="infoNotesWrap">
+          <h3 class="info-subhead">Fragrance notes</h3>
+          <ul id="infoNotes" class="notes-list"></ul>
+        </div>
+        <p class="info-available" id="infoAvailable"></p>
+        <div class="info-actions">
+          <button class="btn" id="infoOrderNow" type="button">Order now</button>
+          <button class="btn ghost" id="infoAddCart" type="button">Add to cart</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="orderDialog" class="order-dialog">
+      <form id="orderForm">
+        <div class="order-head">
+          <h2 id="orderProductTitle">Order</h2>
+          <button id="closeOrder" class="icon-button" type="button" aria-label="Close">✕</button>
+        </div>
+        <input type="hidden" name="fragrance_id">
+        <div id="orderProductInfo" class="order-product"></div>
+
+        <label>Choose an option
+          <select name="size_option" id="sizeOption"></select>
+        </label>
+        <label>Quantity <input name="quantity" id="orderQty" type="number" min="1" step="1" value="1"></label>
+
+        <p class="price-line">Estimated total: <strong id="orderTotal">₱0.00</strong></p>
+
+        <div id="orderCustomerFields">
+          <label>Your name <input name="customer_name"></label>
+          <div class="two-col">
+            <label>Phone <input name="customer_phone"></label>
+            <label>Email <input name="customer_email" type="email"></label>
+          </div>
+          <label>How would you like to get it?
+            <select name="fulfillment_method">
+              <option value="delivery">Delivery</option>
+              <option value="meetup">Meetup</option>
+              <option value="pickup">Pickup</option>
+            </select>
+          </label>
+          <label>Address / meetup place <textarea name="customer_address"></textarea></label>
+          <label>Notes <textarea name="notes" placeholder="Anything we should know?"></textarea></label>
+        </div>
+
+        <div class="order-actions">
+          <button type="submit" id="orderSubmit">Place order</button>
+          <button id="cancelOrder" class="ghost" type="button">Cancel</button>
+        </div>
+        <p id="orderError" class="order-error"></p>
+      </form>
+    </dialog>
+
+    <dialog id="cartDialog" class="order-dialog">
+      <form id="cartForm">
+        <div class="order-head">
+          <h2>Your cart</h2>
+          <button id="closeCart" class="icon-button" type="button" aria-label="Close">✕</button>
+        </div>
+        <div id="cartItems" class="cart-items"></div>
+        <p class="price-line">Total: <strong id="cartTotal">₱0.00</strong></p>
+        <label>Your name <input name="customer_name"></label>
+        <div class="two-col">
+          <label>Phone <input name="customer_phone"></label>
+          <label>Email <input name="customer_email" type="email"></label>
+        </div>
+        <label>How would you like to get it?
+          <select name="fulfillment_method">
+            <option value="delivery">Delivery</option>
+            <option value="meetup">Meetup</option>
+            <option value="pickup">Pickup</option>
+          </select>
+        </label>
+        <label>Address / meetup place <textarea name="customer_address"></textarea></label>
+        <label>Notes <textarea name="notes"></textarea></label>
+        <div class="order-actions">
+          <button type="submit">Place order</button>
+          <button id="clearCart" class="ghost" type="button">Clear cart</button>
+        </div>
+        <p id="cartError" class="order-error"></p>
+      </form>
+    </dialog>
+
+    <dialog id="thanksDialog" class="order-dialog thanks">
+      <div class="thanks-inner">
+        <h2>Thank you! 🌸</h2>
+        <p id="thanksMessage">Your order has been received. We'll contact you shortly to confirm.</p>
+        <button id="closeThanks" type="button">Continue browsing</button>
+      </div>
+    </dialog>
+
+    <script src="/js/shop.js?v=4"></script>
+  </body>
+</html>
